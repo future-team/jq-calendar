@@ -1,34 +1,44 @@
-.jq-pages {
-  color: #666;
-  font-size: 12px;
-  .page-tips{
-    display: inline-block;
+.calendar-panel{
+  position: relative;
+}
+.calendar-container{
+  position: absolute;
+  z-index: 9000;
+  left: 0;
+  top: 2px;
+  padding: 10px;
+  border: #999 1px solid;
+  border-radius: 5px;
+  background: #fff;
+  .calendar-top{
+    cursor: pointer;
+    div{
+      display: inline-block;
+    }
+    text-align: center;
+    margin: 10px;
   }
-  .activePage{
-    color: #ff6633;
-  }
-  /*ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: inline-block;
-    vertical-align: middle;*/
-    a {
-      //float: left;
-      text-decoration: none;
-      padding: 5px;
-      color: #999;
-      background: #f9f9f9;
-      border: 1px solid #d8d8d8;
+  table{
+    thead tr{
+      text-align: center;
+    }
+    td{
+      text-align: center;
+    }
+    span{
+      display: inline-block;
+      text-align: center;
+      padding: 10px;
       cursor: pointer;
-      margin: 2px;
-      &.on {
-        color: #fff;
-        background: #d8d8d8;
-      }
     }
   }
-//}
+  .calendar-tip{
+    float: right;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+}
+
 
 .clearfix:before, .clearfix:after {
   display: table;
@@ -38,4 +48,8 @@
 
 .clearfix:after {
   clear: both;
+}
+
+.jq-hide{
+  display: none;
 }

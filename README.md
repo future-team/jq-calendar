@@ -1,6 +1,6 @@
-# jq-paging
- pagination for jQuery 
- 分页组件
+# jq-calendar
+ calendar for jQuery 
+ 日历组件
 
 ## 使用
  - 使用时，应指定在何处插入分页，即传入root对应的选择器，配置项如下：

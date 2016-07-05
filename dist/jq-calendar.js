@@ -77,26 +77,26 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _calendar2 = _interopRequireDefault(_calendar);
 
-	exports.Paging = _calendar2['default'];
+	exports.Calendar = _calendar2['default'];
 
-	if (typeof Paging == 'undefined') {
-	    window.Paging = exports['Paging'];
+	if (typeof Calendar == 'undefined') {
+	    window.Calendar = exports['Calendar'];
 	}
 
 	//jquery插件导出
 	_jquery2['default'].fn.extend({
-	    Paging: (function (_Paging2) {
-	        function Paging(_x) {
-	            return _Paging2.apply(this, arguments);
+	    Calendar: (function (_Calendar2) {
+	        function Calendar(_x) {
+	            return _Calendar2.apply(this, arguments);
 	        }
 
-	        Paging.toString = function () {
-	            return _Paging2.toString();
+	        Calendar.toString = function () {
+	            return _Calendar2.toString();
 	        };
 
-	        return Paging;
+	        return Calendar;
 	    })(function (opt) {
-	        Paging(this, opt);
+	        Calendar(this, opt);
 	        return this;
 	    })
 	});
@@ -452,16 +452,74 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _templatePagesHtml2 = _interopRequireDefault(_templatePagesHtml);
 
-	var Pagination = function Pagination(options) {
-	    _classCallCheck(this, Pagination);
+	var Calendar = (function () {
+	    function Calendar(options) {
+	        _classCallCheck(this, Calendar);
 
-	    this.opts = _jquery2['default'].extend({}, _optionsJs2['default'], options);
-	};
+	        this.opts = _jquery2['default'].extend({}, _optionsJs2['default'], options);
+	        this.nowTime = new Date();
+	        this.getTime();
+	        this.renderDays();
+	    }
+
+	    /**
+	     * 获取相应的时间
+	     * */
+
+	    Calendar.prototype.getTime = function getTime() {
+	        var nowTime = this.nowTime;
+	        this.dates = {
+	            selectYear: nowTime.getFullYear() + 1900,
+	            selectMonth: nowTime.getMonth(),
+	            selectDay: nowTime.getDate(),
+	            selectWeek: nowTime.getDay()
+	        };
+	        /**
+	         * 当前月的最后一天
+	         * */
+	        var years = this.dates.selectYear,
+	            months = this.dates.selectMonth + 1;
+	        this.dates.lastDay = new Date(years, months, 0).getDate();
+	    };
+
+	    /**
+	     * 渲染每月的日期
+	     * */
+
+	    Calendar.prototype.renderDays = function renderDays() {
+	        var selectDay = this.dates.selectDay,
+	            selectWeek = this.dates.selectWeek,
+	            lastDay = this.dates.lastDay;
+	        for (var i = selectWeek; i < lastDay; i++) {
+	            console.log(i);
+	        }
+	    };
+
+	    /**
+	     * 渲染月列表
+	     * */
+
+	    Calendar.prototype.renderMonth = function renderMonth() {};
+
+	    /**
+	     * 渲染年列表
+	     * */
+
+	    Calendar.prototype.renderYear = function renderYear() {};
+
+	    /**
+	     *
+	     * */
+
+	    Calendar.prototype.bindeEvents = function bindeEvents() {};
+
+	    return Calendar;
+	})();
 
 	exports['default'] = function () {
 	    var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
-	    return new Pagination(options);
+	    return new Calendar(options);
 	};
 
 	module.exports = exports['default'];

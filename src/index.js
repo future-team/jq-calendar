@@ -1,14 +1,14 @@
 import '../css/index.less';
 import $ from 'jquery';
-export Paging from './calendar';
-if(typeof(Paging) == 'undefined'){
-    window.Paging = exports['Paging'];
+export Calendar from './calendar';
+if(typeof(Calendar) == 'undefined'){
+    window.Calendar = exports['Calendar'];
 }
 
 //jquery插件导出
 $.fn.extend({
-    Paging:function(opt){
-        Paging(this,opt);
+    Calendar:function(opt){
+        Calendar(this,opt);
         return this;
     }
 });
