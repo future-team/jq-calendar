@@ -2,16 +2,16 @@
     <div class="calendar-container">
         <div class="calendar-top">
         <div class="calendar-prv">上翻</div>
-        <div class="calendar-title">
-            <span class="year">{{selectYear}}</span>年{{selectMonth}}月
+        <div class="calendar-title" data-type="days">
+            <span class="year">{{selectYear}}年{{selectMonth}}月</span>
         </div>
         <div class="calendar-next">下翻</div>
          </div>
         <table>
-            <thead>
+            <thead id="calendar-thead">
 
             </thead>
-            <tbody id="calendar-table">
+            <tbody id="calendar-tbody">
             </tbody>
         </table>
         <div class="calendar-tip">

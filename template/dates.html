@@ -1,5 +1,5 @@
 <tr>
     {{#each days}}
-    <td><span>{{this}}</span></td>
+    <td><span {{#if disabled}} class="disabled"{{/if}} {{#if on}}class="on" {{/if}} >{{this.key}}</span></td>
     {{/each}}
 </tr>

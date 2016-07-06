@@ -3,6 +3,8 @@
  * */
 let options = {
    root: '.calendar',
-   weeks:['日','一','二','三','四','五','六']
+   weeks:['日','一','二','三','四','五','六'],
+   beginDate:'',
+   endDate:''
 };
 export default options;
