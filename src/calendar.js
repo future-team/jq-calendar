@@ -4,12 +4,17 @@ import panelTPL from '../template/panel.html';
 import datesTemplate from '../template/dates.html';
 import monthTemplate from '../template/months.html';
 import weekTemplate from '../template/week.html';
+import helper from './helper.js';
+
 class Calendar {
     constructor(options) {
         this.opts = $.extend({}, opts, options);
-        this.selectTime = new Date();
-        this.nowTime = $.extend({},this.selectTime);
+        this.selectTime = this.getDefaultDates();
+        this.nowTime = $.extend({}, this.selectTime);
         this.root = $(this.opts.root);
+        //有默认值，设置默认值
+        this.opts.defaultDate && this.root.val(this.opts.defaultDate);
+        this.hasLimit();
         this.getTimeDate(true);
         this.initPanel();
         this.bindEvents();
@@ -22,14 +27,33 @@ class Calendar {
         root.css('position', 'relative');
         this.renderDays();
     }
-
+    /**
+     * 是否有默认时间
+     * */
+    getDefaultDates(){
+        let defaultDate = this.opts.defaultDate;
+        if(defaultDate){
+            return new Date(defaultDate);
+        }else{
+            return new Date();
+        }
+    }
+    /**
+     * 是否有限制时间
+     * */
+    hasLimit(){
+        this.hasBegin = this.opts.beginDate;
+        this.hasEnd = this.opts.endDate;
+        this.beginDates = this.hasBegin?new Date(this.hasBegin):new Date(0,0,0);
+        this.endDates = this.hasEnd?new Date(this.hasEnd):new Date(999,0,0);
+    }
     /**
      * 获取相应的时间,
      * isShow为true时，取selectTime,否则nowTime
      * new date的月份比真正的少1
      * */
     getTimeDate(isShow) {
-        let nowTime = isShow?this.selectTime:this.nowTime;
+        let nowTime = isShow ? this.selectTime : this.nowTime;
         this.dates = {
             selectYear: nowTime.getFullYear(),
             selectMonth: nowTime.getMonth() + 1,
@@ -45,28 +69,29 @@ class Calendar {
         this.dates.lastDay = new Date(years, months, 0).getDate();
         this.dates.firstWeek = new Date(years, months - 1, 1).getDay();
     }
+
     /**
      * 获得初始日期相关参数
      * */
-    getInitDate(data){
+    getInitDate(data) {
         this.initYear = data.selectYear;
         this.initMonth = data.selectMonth;
         this.initDay = data.selectDay;
     }
+
     /**
      * 渲染周几
      * */
     renderWeeks() {
         let weeks = this.opts.weeks;
-        /**
-         * 与日期公用模版
-         * */
         let weekTpl = weekTemplate({days: weeks});
         return weekTpl;
     }
 
     /**
      * 渲染每月的日期
+     * 需要判断两种情况：
+     * 1、是否当前选中时间，2、是否不可用时间
      * */
     renderDays() {
         let tHead = $('#calendar-thead'),
@@ -78,68 +103,78 @@ class Calendar {
         let days = [],
             tplDay = '';
         let isInit = this.isCurrentDate(1);
-        title.html(this.dates.selectYear + '年' +this.dates.selectMonth + '月');
-        //增加日期
+        title.html(this.dates.selectYear + '年' + this.dates.selectMonth + '月');
+        //增加星期tr
         tHead.html(this.renderWeeks());
         let len = lastDay + firstWeek,
-            iLen = Math.ceil(len / 7),
-            jLen = 7,
-            activeIndex = selectDay + firstWeek -1;//当前日期的下标
+            activeIndex = selectDay + firstWeek - 1;//当前日期的下标
         /**
          * 循环待改进,比较特殊所以不拆出来
          * */
-        for (let i = 0; i < iLen; i++) {
-            let minJ = i * jLen,
-                maxJ = (i + 1) * jLen;
-            for (let j = minJ; j < maxJ; j++) {
-                if (j < firstWeek) {
-                    days.push({key:''});
-                } else if (j < len) {
-                    if(j == activeIndex && isInit == true){
-                        days.push({key:j + 1 - firstWeek,on:true});
-                    }else{
-                        days.push({key:j + 1 - firstWeek});
-                    }
-
-                    if (j == len - 1 || j == maxJ - 1) {
-                        tplDay += datesTemplate({days: days});
-                        days = [];
-                    }
+        for (let i = 0; i < len; i++) {
+            if (i < firstWeek) {
+                days.push({key: '',index:i});
+            } else if (i < len) {
+                let num = i + 1 - firstWeek;
+                if ((this.hasBegin || this.hasEnd) && this.isLimitDate(num)) {
+                    days.push({key: num, index:i,disabled: true});
+                } else if (i == activeIndex && isInit == true) {
+                    days.push({key: num, index:i,on: true});
+                } else {
+                    days.push({key: num,index:i});
                 }
             }
-
         }
+        tplDay += datesTemplate({days: days});
         tBody.html(tplDay);
+    }
+    /**
+     * 判断是否不可用日期
+     * 根据不同type判断何种情况
+     * */
+    isLimitDate(days){
+        let year = this.dates.selectYear,
+            month = this.dates.selectMonth,
+            day = days;
+        let beginDate = this.beginDates.getTime(),
+            endDate = this.endDates.getTime(),
+            tempDate = new Date(year,month,day).getTime();
+        if(tempDate < beginDate || tempDate > endDate){
+            return true;
+        }else{
+            return false;
+        }
     }
     /**
      * 判断是否当前年月日
      * */
-    isCurrentDate(type){
+    isCurrentDate(type) {
         let selectYear = this.dates.selectYear,
             selectMonth = this.dates.selectMonth,
             selectDay = this.dates.selectDay,
             isTrue = false;
-        switch(type){
+        switch (type) {
             //是否当前月
             case 1:
-                if(selectYear == this.initYear && selectMonth == this.initMonth){
+                if (selectYear == this.initYear && selectMonth == this.initMonth) {
                     isTrue = true;
                 }
                 break;
             //是否当前年
             case 2:
-                if(selectYear == this.initYear){
+                if (selectYear == this.initYear) {
                     isTrue = true;
                 }
                 break;
             case 3:
-                if(selectYear == this.initYear){
+                if (selectYear == this.initYear) {
                     isTrue = true;
                 }
                 break;
         }
         return isTrue;
     }
+
     /**
      * 渲染月列表
      * */
@@ -147,7 +182,7 @@ class Calendar {
         let tHead = $('#calendar-thead'),
             tBody = $('#calendar-tbody'),
             selctMonth = this.dates.selectMonth;
-        let tplMonth = this.getTpl(3, 4, 1, true,selctMonth-1);
+        let tplMonth = this.getTpl(1, true, selctMonth - 1);
         let title = $('.calendar-top .year');
         title.html(this.dates.selectYear + '年');
         tHead.html('');
@@ -163,55 +198,37 @@ class Calendar {
             tHead = $('#calendar-thead'),
             tBody = $('#calendar-tbody');
         let minYear = parseInt(year / 10) * 10,
-            maxYear = minYear +10;
+            maxYear = minYear + 10;
         let title = $('.calendar-top .year');
-        title.html(minYear + '-'+ maxYear);
-        let tplYear = this.getTpl(3, 4, minYear - 1, false,this.initYear);
+        title.html(minYear + '-' + maxYear);
+        let tplYear = this.getTpl(minYear - 1, false, this.initYear);
         tHead.html('');
         tBody.html(tplYear);
     }
 
     /**
      * 获得年月模版数据
-     * @param iLen table的行数
-     * @param jLen table的列数
      * @param data 第一个td的内容
      * @param isMonth 是否渲染月份
      * @param len 标记位，标记当前选中月份或年
      * */
-    getTpl(iLen, jLen, data, isMonth,indexs) {
+    getTpl(data, isMonth, indexs) {
         let dates = [],
             tpl = '',
             initTag = false;
-        let templates = isMonth ? monthTemplate : datesTemplate;
-            isMonth && (initTag = this.isCurrentDate(2));
-
-        for (let i = 0; i < iLen; i++) {
-            let minJ = i * jLen,
-                maxJ = (i + 1) * jLen;
-            for (let j = minJ; j < maxJ; j++) {
-                //this.getJudge(isYear);
-                let index = j + data;
-                if((isMonth && initTag && j == indexs) ||(!isMonth && indexs == index)){
-                    dates.push({key:index,on:true});
-                }else{
-                    dates.push({key:index});
-                }
-
-                if (j == maxJ - 1) {
-                    tpl += templates({days: dates});
-                    dates = [];
-                }
+        let templates = monthTemplate;
+        isMonth && (initTag = this.isCurrentDate(2));
+        for (let i = 0; i < 12; i++) {
+            let index = i + data;
+            if ((isMonth && initTag && i == indexs) || (!isMonth && indexs == index)) {
+                dates.push({key: index, on: true,index:i});
+            } else {
+                dates.push({key: index,index:i});
             }
 
         }
+        tpl = templates({days: dates,isMonth:isMonth});
         return tpl;
-    }
-    /**
-     * 判断是否当前
-     * */
-    isCurrentMY(){
-
     }
     bindEvents() {
         let _this = this,
@@ -232,7 +249,7 @@ class Calendar {
         });
         root.on('click', function (e) {
             e.stopPropagation();
-            panels.hasClass('jq-hide')&&_this.showInit();
+            panels.hasClass('jq-hide') && _this.showInit();
             panels.toggleClass('jq-hide');
 
         });
@@ -255,35 +272,33 @@ class Calendar {
                 selectDay = _this.dates.selectDay;
             switch (_this.titleType) {
                 case 'days':
-                    _this.getDateNum(selectYear,selectMonth,val,false);
-                    /*let vals = selectYear + '-' +selectMonth + '-' + val;
-                    root.val(vals);
-                    _this.setSelectTime(selectYear,selectMonth-1,val);
-                    _this.close();*/
+                    _this.getDateNum(selectYear, selectMonth, val, false);
                     break;
                 case 'months':
-                    _this.nowTime = _this.getNewDate(selectYear, val-1, selectDay);
+                    _this.nowTime = _this.getNewDate(selectYear, val - 1, selectDay);
                     _this.reRenderDates(true);
                     _this.titleType = 'days';
                     break;
                 case 'years':
-                    _this.nowTime = _this.getNewDate(val, selectMonth,selectDay);
+                    _this.nowTime = _this.getNewDate(val, selectMonth, selectDay);
                     _this.reRenderDates(false);
                     _this.titleType = 'months';
             }
         });
-        toDay.on('click',function(){
+        toDay.on('click', function () {
             _this.getToday();
         })
 
     }
+
     /**
      * 改变后重新渲染日期或月份
      * */
-    reRenderDates(isDay){
+    reRenderDates(isDay) {
         this.getTimeDate(false);
-        isDay ? this.renderDays(): this.renderMonth();
+        isDay ? this.renderDays() : this.renderMonth();
     }
+
     switchTitle(titleType) {
         let _this = this;
         switch (titleType) {
@@ -300,6 +315,7 @@ class Calendar {
                 _this.titleType = 'days';
         }
     }
+
     /**
      * 关闭面板
      * */
@@ -307,81 +323,106 @@ class Calendar {
         let panels = $('.calendar-panel');
         !panels.hasClass('jq-hide') && panels.addClass('jq-hide');
     }
+
     /**
      * 获取新的date变量
      * @param year
      * @param month
      * @param day
      * */
-    getNewDate(year,month,day){
-        return new Date(year,month,day);
+    getNewDate(year, month, day) {
+        return new Date(year, month, day);
     }
-    prev(){
+
+    prev() {
         this.changeHandler(false);
     }
-    next(){
+
+    next() {
         this.changeHandler(true);
     }
+
     /**
      * next，prev。calllback。
      * isNext true表示next
      * */
-    changeHandler(isNext){
+    changeHandler(isNext) {
         let title = $('.calendar-top .year');
         let selectYear = this.dates.selectYear,
             selectMonth = this.dates.selectMonth,
             selectDay = this.dates.selectDay;
         switch (this.titleType) {
             case 'days':
-                let month = isNext ? selectMonth : selectMonth -2;
+                let month = isNext ? selectMonth : selectMonth - 2;
                 this.nowTime = this.getNewDate(selectYear, month, selectDay);
                 this.reRenderDates(true);
                 break;
             case 'months':
-                let years = isNext ? selectYear+1:selectYear-1;
-                this.nowTime = this.getNewDate(years,selectMonth, selectDay);
+                let years = isNext ? selectYear + 1 : selectYear - 1;
+                this.nowTime = this.getNewDate(years, selectMonth, selectDay);
                 this.reRenderDates(false);
                 break;
             case 'years':
-                let year = isNext ? selectYear+10:selectYear-10;
-                this.nowTime = this.getNewDate(year,selectMonth, selectDay);
+                let year = isNext ? selectYear + 10 : selectYear - 10;
+                this.nowTime = this.getNewDate(year, selectMonth, selectDay);
                 this.getTimeDate(false);
                 this.renderYear(year);
                 break
         }
     }
+
     /**
      * 设置selectTime,再次打开保持对应
      * */
-    setSelectTime(year,month,day){
-        this.selectTime = year?new Date(year,month,day):new Date();
+    setSelectTime(year, month, day) {
+        this.selectTime = year ? new Date(year, month, day) : new Date();
     }
+
     /**
      * 再次展示时，重新展示当前时间
      * */
-    showInit(){
+    showInit() {
         this.getTimeDate(true);
         this.renderDays();
     }
+
     /**
      * 获得今天
      * */
-    getToday(){
+    getToday() {
         this.setSelectTime();
         this.getTimeDate(true);
-        this.getDateNum(this.dates.selectYear,this.dates.selectMonth,this.dates.selectDay,true);
+        this.getDateNum(this.dates.selectYear, this.dates.selectMonth, this.dates.selectDay, true);
     }
+
     /**
      * 选择日期
      * isToday为true，通过点击今天获取日期
      * 无需设置selectDate
      * */
-    getDateNum(selectYear,selectMonth,val,isToday){
+    getDateNum(selectYear, selectMonth, val, isToday) {
+        this.getFormatNum();
         let root = this.root,
-            vals = selectYear + '-' +selectMonth + '-' + val;
+            vals = this.getFormatNum(selectYear,selectMonth,val);
         root.val(vals);
-        !isToday && this.setSelectTime(selectYear,selectMonth-1,val);
+        !isToday && this.setSelectTime(selectYear, selectMonth - 1, val);
         this.close();
+    }
+
+    /**
+     * 格式化日期
+     * */
+    getFormatNum(year,month,day) {
+        let date = arguments,
+            str='';
+        for(let i = 0;i<date.length;i++){
+            if (date[i] < 10) {
+                date[i] = '0' + date[i];
+            }
+            i < 2?str += date[i]+'-':str += date[i];
+        }
+        return str;
+
     }
 }
 

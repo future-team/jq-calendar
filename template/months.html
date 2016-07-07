@@ -1,5 +1,11 @@
 <tr>
     {{#each days}}
-    <td><span {{#if disabled}} class="disabled"{{/if}} {{#if on}}class="on" {{/if}} >{{key}}月</span></td>
+    {{#renderYear this}}
+    <td><span {{#if on}}class="on" {{/if}} >{{key}}{{#if ../isMonth}}月{{/if}}</span></td>
+    {{else}}
+    <td><span {{#if on}}class="on" {{/if}} >{{key}}{{#if ../isMonth}}月{{/if}}</span></td>
+    </tr>
+    <tr>
+    {{/renderYear}}
     {{/each}}
 </tr>
