@@ -1,9 +1,10 @@
 <tr>
+    class={{#if ../isMonth}}"month"{{else}}}"year"{{/if}}
     {{#each days}}
     {{#renderYear this}}
-    <td><span {{#if on}}class="on" {{/if}} >{{key}}{{#if ../isMonth}}月{{/if}}</span></td>
+    <td><span class=" {{#if ../isMonth}}month{{else}}year{{/if}}{{#if on}} on {{/if}} "> {{key}}{{#if ../isMonth}}月{{/if}}</span></td>
     {{else}}
-    <td><span {{#if on}}class="on" {{/if}} >{{key}}{{#if ../isMonth}}月{{/if}}</span></td>
+    <td><span class=" {{#if ../isMonth}}month{{else}}year{{/if}}{{#if on}} on {{/if}} ">{{key}}{{#if ../isMonth}}月{{/if}}</span></td>
     </tr>
     <tr>
     {{/renderYear}}

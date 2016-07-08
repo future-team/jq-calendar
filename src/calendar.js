@@ -24,7 +24,8 @@ class Calendar {
         let root = this.root,
             panel = panelTPL(this.dates);
         root.after(panel);
-        root.css('position', 'relative');
+        //root.css('position', 'relative');
+        this.title = $('.calendar-top .dates');
         this.renderDays();
     }
     /**
@@ -99,9 +100,9 @@ class Calendar {
         let selectDay = this.dates.selectDay,
             firstWeek = this.dates.firstWeek,
             lastDay = this.dates.lastDay;
-        let title = $('.calendar-top .year');
         let days = [],
-            tplDay = '';
+            tplDay = '',
+            title = this.title;
         let isInit = this.isCurrentDate(1);
         title.html(this.dates.selectYear + '年' + this.dates.selectMonth + '月');
         //增加星期tr
@@ -134,7 +135,7 @@ class Calendar {
      * */
     isLimitDate(days){
         let year = this.dates.selectYear,
-            month = this.dates.selectMonth,
+            month = this.dates.selectMonth-1,
             day = days;
         let beginDate = this.beginDates.getTime(),
             endDate = this.endDates.getTime(),
@@ -182,8 +183,8 @@ class Calendar {
         let tHead = $('#calendar-thead'),
             tBody = $('#calendar-tbody'),
             selctMonth = this.dates.selectMonth;
-        let tplMonth = this.getTpl(1, true, selctMonth - 1);
-        let title = $('.calendar-top .year');
+        let tplMonth = this.getTpl(1, true, selctMonth - 1),
+            title = this.title;
         title.html(this.dates.selectYear + '年');
         tHead.html('');
         tBody.html(tplMonth);
@@ -193,13 +194,12 @@ class Calendar {
      * 渲染年列表
      * */
     renderYear(years) {
-        //let year = this.dates.selectYear,
         let year = years,
             tHead = $('#calendar-thead'),
             tBody = $('#calendar-tbody');
         let minYear = parseInt(year / 10) * 10,
-            maxYear = minYear + 10;
-        let title = $('.calendar-top .year');
+            maxYear = minYear + 1,
+            title = this.title;
         title.html(minYear + '-' + maxYear);
         let tplYear = this.getTpl(minYear - 1, false, this.initYear);
         tHead.html('');
@@ -233,7 +233,7 @@ class Calendar {
     bindEvents() {
         let _this = this,
             body = $("body"),
-            title = $('.calendar-title'),
+            title = _this.title,
             next = $('.calendar-next'),
             prev = $('.calendar-prv'),
             root = this.root,
@@ -270,6 +270,9 @@ class Calendar {
                 selectYear = _this.dates.selectYear,
                 selectMonth = _this.dates.selectMonth,
                 selectDay = _this.dates.selectDay;
+            if(!val || $(this).hasClass('disabled')){
+                return;
+            }
             switch (_this.titleType) {
                 case 'days':
                     _this.getDateNum(selectYear, selectMonth, val, false);
@@ -382,6 +385,8 @@ class Calendar {
      * 再次展示时，重新展示当前时间
      * */
     showInit() {
+        //重新显示日历，重置titleType
+        this.titleType = 'days';
         this.getTimeDate(true);
         this.renderDays();
     }

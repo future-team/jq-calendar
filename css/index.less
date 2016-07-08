@@ -1,52 +1,109 @@
-.calendar-panel{
+@import "public.less";
+.calendar-panel {
   position: relative;
 }
-.calendar-container{
+.calendar-container {
   position: absolute;
   z-index: 9000;
   left: 0;
   top: 2px;
   padding: 10px;
-  border: #999 1px solid;
-  border-radius: 5px;
-  background: #fff;
-  .calendar-top{
+  border: #ccc 1px solid;
+  -webkit-box-shadow: 0px 0px 8px 1px #ccc;
+  .border-radius(5px);
+  background: @white;
+  width: 245px;
+  font-weight: bold;
+  .calendar-top {
     cursor: pointer;
-    div{
+    text-align: center;
+    margin: 15px 0 5px;
+    div {
       display: inline-block;
     }
-    text-align: center;
-    margin: 10px;
+    .calendar-title{
+      display: inline-block;
+      width: 180px;
+      text-align: center;
+    }
+    .calendar-prv,.calendar-next{
+      width: 20px;
+      height: 20px;
+      &:after{
+        content: '';
+        display: inline-block;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        width: 12px;
+        height: 12px;
+        border-top: 2px solid @origin;
+        border-left: 2px solid @origin;
+        .transform(-45deg);
+      }
+    }
+    .calendar-next{
+      &:after{
+        .transform(135deg);
+      }
+    }
   }
   table{
-    thead tr{
-      text-align: center;
-    }
-    td{
-      text-align: center;
-    }
-    span{
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+  thead tr {
+    text-align: center;
+    color: #999;
+    line-height: 40px;
+  }
+  td {
+    text-align: center;
+  }
+  tbody{
+    span {
       display: inline-block;
       text-align: center;
-      padding: 10px;
       cursor: pointer;
-      &.on{
-        color: #ff6633;
+      font-size: 14px;
+      width: 33px;
+      height: 26px;
+      line-height: 26px;
+      color: #404040;
+      font-weight: bold;
+      &.on {
+        background-color: @origin;
+        color: @white;
+        .border-radius(2px);
       }
-      &.disabled{
+      &.disabled {
         cursor: default;
-        background: #666;
         color: #999;
+      }
+      &.valid{
+        background: transparent;
+      }
+      &.month, &.year {
+        width: 60px;
+        height: 35px;
+        line-height: 35px;
+      }
+      &:not(.disabled){
+        &:hover{
+          background-color: @white;
+          color: @origin;
+          .border-radius(2px);
+        }
       }
     }
   }
-  .calendar-tip{
-    float: right;
-    margin-right: 10px;
+
+  .calendar-tip {
+    text-align: right;
+    padding: 10px 0;
     cursor: pointer;
+    margin-right: 5%;
   }
 }
-
 
 .clearfix:before, .clearfix:after {
   display: table;
@@ -58,6 +115,6 @@
   clear: both;
 }
 
-.jq-hide{
+.jq-hide {
   display: none;
 }
