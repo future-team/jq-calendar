@@ -198,9 +198,9 @@ class Calendar {
             tHead = $('#calendar-thead'),
             tBody = $('#calendar-tbody');
         let minYear = parseInt(year / 10) * 10,
-            maxYear = minYear + 1,
+            maxYear = minYear + 10,
             title = this.title;
-        title.html(minYear + '-' + maxYear);
+        title.html(minYear-1 + '-' + maxYear);
         let tplYear = this.getTpl(minYear - 1, false, this.initYear);
         tHead.html('');
         tBody.html(tplYear);
