@@ -7,64 +7,46 @@
  
  ```
        /**
-        * 当前页
-        * */
-       currentPage:1,
-       /**
-        * 每页展示条目数量
-        * */
-       pageSize:5,
-       /**
-        * 总条目数量
-        * */
-       total:20,
-       /**
-        * 列表每次显示多少页
-        * */
-       showNum: 5,
-       /**
-        * 插入分页的元素标记
-        * */
-       root:'#pages',
-       /**
-        * 是否显示提示,默认显示
-        * */
-           showTip: true,
-       /**
-        * tip是否显示在左边，true为左false为右，默认为true
-        * */
-           leftTip: true,
-       /**
-        * 点击回调事件
-        * 返回参数为要显示的页数
-        * */
-       clickCallBack: function(num){
-   
-       }
+          * 日期插入的标记位置
+          * */
+         root: '.calendar',
+         /**
+          * 周显示样式
+          * */
+         weeks:['日','一','二','三','四','五','六'],
+         /**
+          * 默认选中时间
+          * */
+         defaultDate:'',
+         /**
+          * 可用时间的起始时间
+          * */
+         beginDate:'',
+         /**
+          * 可用时间的终止时间
+          * */
+         endDate:''
        
  ```
  使用实例：
  js:
  
  ```
-    import { Paging } from '../../src/index.js';
+   import { Calendar } from 'jq-calendar';
+   import $ from 'jquery';
     (()=>{
-       new Paging({
-          pageSize:5,
-          total:203,
-          showNum:9,
-          root:'#pages',
-          clickCallBack:function(num){
-             console.log('第'+num+'页');
-          }
-       });
+       new Calendar({
+             root:'.calendar',   
+             beginDate:'2016-07-06',
+             endDate:'2016-07-10'
+          });
     })();
  ```
  html:
  
  ```
     <div id="root" style="padding: 10px">
-        <div id="pages" class="jq-pages"></div>
+        <input type="text" class="calendar" />
     </div>
  ```
 
