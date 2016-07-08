@@ -182,8 +182,8 @@ class Calendar {
     renderMonth() {
         let tHead = $('#calendar-thead'),
             tBody = $('#calendar-tbody'),
-            selctMonth = this.dates.selectMonth;
-        let tplMonth = this.getTpl(1, true, selctMonth - 1),
+            selectMonth = this.initMonth;
+        let tplMonth = this.getTpl(1, true, selectMonth - 1),
             title = this.title;
         title.html(this.dates.selectYear + '年');
         tHead.html('');
@@ -350,7 +350,6 @@ class Calendar {
      * isNext true表示next
      * */
     changeHandler(isNext) {
-        let title = $('.calendar-top .year');
         let selectYear = this.dates.selectYear,
             selectMonth = this.dates.selectMonth,
             selectDay = this.dates.selectDay;
