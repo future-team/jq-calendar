@@ -6,9 +6,8 @@ if(typeof(Calendar) == 'undefined'){
 }
 
 //jquery插件导出
-$.fn.extend({
+$.extend({
     Calendar:function(opt){
-        Calendar(this,opt);
-        return this;
+        Calendar(opt,this);
     }
 });

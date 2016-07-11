@@ -24,8 +24,8 @@ class Calendar {
         let root = this.root,
             panel = panelTPL(this.dates);
         root.after(panel);
-        //root.css('position', 'relative');
-        this.title = $('.calendar-top .dates');
+        this.panels = root.next('.calendar-panel');
+        this.title = this.panels.find('.calendar-top .dates');
         this.renderDays();
     }
     /**
@@ -46,7 +46,7 @@ class Calendar {
         this.hasBegin = this.opts.beginDate;
         this.hasEnd = this.opts.endDate;
         this.beginDates = this.hasBegin?new Date(this.hasBegin):new Date(0,0,0);
-        this.endDates = this.hasEnd?new Date(this.hasEnd):new Date(999,0,0);
+        this.endDates = this.hasEnd?new Date(this.hasEnd):new Date(9999,0,0);
     }
     /**
      * 获取相应的时间,
@@ -95,8 +95,9 @@ class Calendar {
      * 1、是否当前选中时间，2、是否不可用时间
      * */
     renderDays() {
-        let tHead = $('#calendar-thead'),
-            tBody = $('#calendar-tbody');
+        let panels = this.panels,
+            tHead = panels.find('#calendar-thead'),
+            tBody = panels.find('#calendar-tbody');
         let selectDay = this.dates.selectDay,
             firstWeek = this.dates.firstWeek,
             lastDay = this.dates.lastDay;
@@ -180,8 +181,9 @@ class Calendar {
      * 渲染月列表
      * */
     renderMonth() {
-        let tHead = $('#calendar-thead'),
-            tBody = $('#calendar-tbody'),
+        let panels = this.panels,
+            tHead = panels.find('#calendar-thead'),
+            tBody = panels.find('#calendar-tbody'),
             selectMonth = this.initMonth;
         let tplMonth = this.getTpl(1, true, selectMonth - 1),
             title = this.title;
@@ -234,21 +236,23 @@ class Calendar {
         let _this = this,
             body = $("body"),
             title = _this.title,
-            next = $('.calendar-next'),
-            prev = $('.calendar-prv'),
-            root = this.root,
-            panels = $('.calendar-panel'),
+            root = _this.root,
+            panels = _this.panels;
+        let next = panels.find('.calendar-next'),
+            prev = panels.find('.calendar-prv'),
             tBody = panels.find('table tbody'),
-            toDay = $('.calendar-tip');
+            toDay = panels.find('.calendar-tip');
         _this.titleType = title.attr('data-type');
         body.on('click', function (e) {
             let that = $(e.target);
-            if (that.parents('.calendar-panel').length < 1) {
+            let panel = _this.getPanelClassName();
+            if(that[0] == root[0]){
+                return false
+            }else if (that.parents(panel).length < 1) {
                 _this.close();
             }
         });
         root.on('click', function (e) {
-            e.stopPropagation();
             panels.hasClass('jq-hide') && _this.showInit();
             panels.toggleClass('jq-hide');
 
@@ -293,7 +297,12 @@ class Calendar {
         })
 
     }
-
+    /**
+     * 获取当前caneldar的class
+     * */
+    getPanelClassName(){
+        return this.opts.root+'+'+ '.calendar-panel';
+    }
     /**
      * 改变后重新渲染日期或月份
      * */
@@ -323,7 +332,7 @@ class Calendar {
      * 关闭面板
      * */
     close() {
-        let panels = $('.calendar-panel');
+        let panels = this.panels;
         !panels.hasClass('jq-hide') && panels.addClass('jq-hide');
     }
 
