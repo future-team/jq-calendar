@@ -5,14 +5,19 @@ import datesTemplate from '../template/dates.html';
 import monthTemplate from '../template/months.html';
 import weekTemplate from '../template/week.html';
 import helper from './helper.js';
-
+/**
+ * 基本思路：通过opt配置想初始化panel插入对应位置。
+ * 判断是否有限制时间及默认值来渲染table
+ * 存在选中日期selectTime和临时日期nowTime，只有选中日期后才改变selectTime
+ * 提供setBeginDate和setEndDate方法动态改变限制日期以实现联动
+ * */
 class Calendar {
     constructor(options) {
         this.opts = $.extend({}, opts, options);
         this.selectTime = this.getDefaultDates();
         this.nowTime = $.extend({}, this.selectTime);
         this.root = $(this.opts.root);
-        //有默认值，设置默认值
+        //设置默认值
         this.opts.defaultDate && this.root.val(this.opts.defaultDate);
         this.hasLimit();
         this.getTimeDate(true);
@@ -28,30 +33,34 @@ class Calendar {
         this.title = this.panels.find('.calendar-top .dates');
         this.renderDays();
     }
+
     /**
      * 是否有默认时间
      * */
-    getDefaultDates(){
+    getDefaultDates() {
         let defaultDate = this.opts.defaultDate;
-        if(defaultDate){
+        if (defaultDate) {
             return new Date(defaultDate);
-        }else{
+        } else {
             return new Date();
         }
     }
+
     /**
      * 是否有限制时间
      * */
-    hasLimit(){
+    hasLimit() {
         this.hasBegin = this.opts.beginDate;
         this.hasEnd = this.opts.endDate;
-        this.beginDates = this.hasBegin?new Date(this.hasBegin):new Date(0,0,0);
-        this.endDates = this.hasEnd?new Date(this.hasEnd):new Date(9999,0,0);
+        this.beginDates = this.hasBegin ? new Date(this.hasBegin) : new Date(0, 0, 0);
+        this.endDates = this.hasEnd ? new Date(this.hasEnd) : new Date(9999, 0, 0);
     }
+
     /**
      * 获取相应的时间,
      * isShow为true时，取selectTime,否则nowTime
      * new date的月份比真正的少1
+     * @isShow 是否以初始化日期为依据 false
      * */
     getTimeDate(isShow) {
         let nowTime = isShow ? this.selectTime : this.nowTime;
@@ -115,38 +124,40 @@ class Calendar {
          * */
         for (let i = 0; i < len; i++) {
             if (i < firstWeek) {
-                days.push({key: '',index:i});
+                days.push({key: '', index: i});
             } else if (i < len) {
                 let num = i + 1 - firstWeek;
                 if ((this.hasBegin || this.hasEnd) && this.isLimitDate(num)) {
-                    days.push({key: num, index:i,disabled: true});
+                    days.push({key: num, index: i, disabled: true});
                 } else if (i == activeIndex && isInit == true) {
-                    days.push({key: num, index:i,on: true});
+                    days.push({key: num, index: i, on: true});
                 } else {
-                    days.push({key: num,index:i});
+                    days.push({key: num, index: i});
                 }
             }
         }
         tplDay += datesTemplate({days: days});
         tBody.html(tplDay);
     }
+
     /**
      * 判断是否不可用日期
      * 根据不同type判断何种情况
      * */
-    isLimitDate(days){
+    isLimitDate(days) {
         let year = this.dates.selectYear,
-            month = this.dates.selectMonth-1,
+            month = this.dates.selectMonth - 1,
             day = days;
         let beginDate = this.beginDates.getTime(),
             endDate = this.endDates.getTime(),
-            tempDate = new Date(year,month,day).getTime();
-        if(tempDate < beginDate || tempDate > endDate){
+            tempDate = new Date(year, month, day).getTime();
+        if (tempDate < beginDate || tempDate > endDate) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
+
     /**
      * 判断是否当前年月日
      * */
@@ -197,12 +208,13 @@ class Calendar {
      * */
     renderYear(years) {
         let year = years,
-            tHead = $('#calendar-thead'),
-            tBody = $('#calendar-tbody');
+            panels = this.panels,
+            tHead = panels.find('#calendar-thead'),
+            tBody = panels.find('#calendar-tbody');
         let minYear = parseInt(year / 10) * 10,
             maxYear = minYear + 10,
             title = this.title;
-        title.html(minYear-1 + '-' + maxYear);
+        title.html(minYear - 1 + '-' + maxYear);
         let tplYear = this.getTpl(minYear - 1, false, this.initYear);
         tHead.html('');
         tBody.html(tplYear);
@@ -223,15 +235,16 @@ class Calendar {
         for (let i = 0; i < 12; i++) {
             let index = i + data;
             if ((isMonth && initTag && i == indexs) || (!isMonth && indexs == index)) {
-                dates.push({key: index, on: true,index:i});
+                dates.push({key: index, on: true, index: i});
             } else {
-                dates.push({key: index,index:i});
+                dates.push({key: index, index: i});
             }
 
         }
-        tpl = templates({days: dates,isMonth:isMonth});
+        tpl = templates({days: dates, isMonth: isMonth});
         return tpl;
     }
+
     bindEvents() {
         let _this = this,
             body = $("body"),
@@ -246,9 +259,9 @@ class Calendar {
         body.on('click', function (e) {
             let that = $(e.target);
             let panel = _this.getPanelClassName();
-            if(that[0] == root[0]){
+            if (that[0] == root[0]) {
                 return false
-            }else if (that.parents(panel).length < 1) {
+            } else if (that.parents(panel).length < 1) {
                 _this.close();
             }
         });
@@ -274,7 +287,7 @@ class Calendar {
                 selectYear = _this.dates.selectYear,
                 selectMonth = _this.dates.selectMonth,
                 selectDay = _this.dates.selectDay;
-            if(!val || $(this).hasClass('disabled')){
+            if (!val || $(this).hasClass('disabled')) {
                 return;
             }
             switch (_this.titleType) {
@@ -297,12 +310,14 @@ class Calendar {
         })
 
     }
+
     /**
      * 获取当前caneldar的class
      * */
-    getPanelClassName(){
-        return this.opts.root+'+'+ '.calendar-panel';
+    getPanelClassName() {
+        return this.opts.root + '+' + '.calendar-panel';
     }
+
     /**
      * 改变后重新渲染日期或月份
      * */
@@ -353,7 +368,6 @@ class Calendar {
     next() {
         this.changeHandler(true);
     }
-
     /**
      * next，prev。calllback。
      * isNext true表示next
@@ -414,10 +428,11 @@ class Calendar {
      * 无需设置selectDate
      * */
     getDateNum(selectYear, selectMonth, val, isToday) {
-        this.getFormatNum();
         let root = this.root,
-            vals = this.getFormatNum(selectYear,selectMonth,val);
+            vals = this.getFormatNum(selectYear, selectMonth, val),
+            selectHandler = this.opts.selectHandler;
         root.val(vals);
+        selectHandler(vals);
         !isToday && this.setSelectTime(selectYear, selectMonth - 1, val);
         this.close();
     }
@@ -425,18 +440,40 @@ class Calendar {
     /**
      * 格式化日期
      * */
-    getFormatNum(year,month,day) {
+    getFormatNum(year, month, day) {
         let date = arguments,
-            str='';
-        for(let i = 0;i<date.length;i++){
+            str = '';
+        for (let i = 0; i < date.length; i++) {
             if (date[i] < 10) {
                 date[i] = '0' + date[i];
             }
-            i < 2?str += date[i]+'-':str += date[i];
+            i < 2 ? str += date[i] + '-' : str += date[i];
         }
         return str;
-
     }
+
+    /**
+     * 动态调用set方法，改变对应属性,
+     * @param isBegin 默认为true
+     * */
+    setDate(date, isBegin) {
+        if (isBegin) {
+            this.beginDates = date ? new Date(date) : new Date(0, 0, 0);
+        } else {
+            this.endDates = date ? new Date(date) : new Date(9999, 0, 0);
+        }
+        this.getTimeDate(true);
+        this.renderDays();
+    }
+
+    setBeginDate(date) {
+        this.setDate(date, true);
+    }
+
+    setEndDate(date) {
+        this.setDate(date, false);
+    }
+
 }
 
 export default (options = {})=> {

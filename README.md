@@ -25,8 +25,22 @@
          /**
           * 可用时间的终止时间
           * */
-         endDate:''
+         endDate:'',
+         /**
+          * 选择时间之后的回调，返回参数为选择日期值
+          * */
+         selectHandler: function(date){
+             console.log(date);
+         }
        
+ ```
+ 提供动态设置开始，结束时间的方法（即不在初始化时设置）
+ 建议selectHandler时调用，实现多日历联动
+ 
+ ```
+       let a = new Calendar();
+       a.setBeginDate(date);
+       a.setEndDate(date) 
  ```
  使用实例：
  js:

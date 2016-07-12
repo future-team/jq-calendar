@@ -85,7 +85,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	//jquery插件导出
-	_jquery2['default'].fn.extend({
+	_jquery2['default'].extend({
 	    Calendar: (function (_Calendar2) {
 	        function Calendar(_x) {
 	            return _Calendar2.apply(this, arguments);
@@ -97,8 +97,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        return Calendar;
 	    })(function (opt) {
-	        Calendar(this, opt);
-	        return this;
+	        Calendar(opt, this);
 	    })
 	});
 
@@ -469,6 +468,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _helperJs2 = _interopRequireDefault(_helperJs);
 
+	/**
+	 * 基本思路：通过opt配置想初始化panel插入对应位置。
+	 * 判断是否有限制时间及默认值来渲染table
+	 * 存在选中日期selectTime和临时日期nowTime，只有选中日期后才改变selectTime
+	 * 提供setBeginDate和setEndDate方法动态改变限制日期以实现联动
+	 * */
+
 	var Calendar = (function () {
 	    function Calendar(options) {
 	        _classCallCheck(this, Calendar);
@@ -477,7 +483,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.selectTime = this.getDefaultDates();
 	        this.nowTime = _jquery2['default'].extend({}, this.selectTime);
 	        this.root = _jquery2['default'](this.opts.root);
-	        //有默认值，设置默认值
+	        //设置默认值
 	        this.opts.defaultDate && this.root.val(this.opts.defaultDate);
 	        this.hasLimit();
 	        this.getTimeDate(true);
@@ -489,8 +495,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var root = this.root,
 	            panel = _templatePanelHtml2['default'](this.dates);
 	        root.after(panel);
-	        //root.css('position', 'relative');
-	        this.title = _jquery2['default']('.calendar-top .dates');
+	        this.panels = root.next('.calendar-panel');
+	        this.title = this.panels.find('.calendar-top .dates');
 	        this.renderDays();
 	    };
 
@@ -515,13 +521,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.hasBegin = this.opts.beginDate;
 	        this.hasEnd = this.opts.endDate;
 	        this.beginDates = this.hasBegin ? new Date(this.hasBegin) : new Date(0, 0, 0);
-	        this.endDates = this.hasEnd ? new Date(this.hasEnd) : new Date(999, 0, 0);
+	        this.endDates = this.hasEnd ? new Date(this.hasEnd) : new Date(9999, 0, 0);
 	    };
 
 	    /**
 	     * 获取相应的时间,
 	     * isShow为true时，取selectTime,否则nowTime
 	     * new date的月份比真正的少1
+	     * @isShow 是否以初始化日期为依据 false
 	     * */
 
 	    Calendar.prototype.getTimeDate = function getTimeDate(isShow) {
@@ -569,8 +576,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * */
 
 	    Calendar.prototype.renderDays = function renderDays() {
-	        var tHead = _jquery2['default']('#calendar-thead'),
-	            tBody = _jquery2['default']('#calendar-tbody');
+	        var panels = this.panels,
+	            tHead = panels.find('#calendar-thead'),
+	            tBody = panels.find('#calendar-tbody');
 	        var selectDay = this.dates.selectDay,
 	            firstWeek = this.dates.firstWeek,
 	            lastDay = this.dates.lastDay;
@@ -659,8 +667,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * */
 
 	    Calendar.prototype.renderMonth = function renderMonth() {
-	        var tHead = _jquery2['default']('#calendar-thead'),
-	            tBody = _jquery2['default']('#calendar-tbody'),
+	        var panels = this.panels,
+	            tHead = panels.find('#calendar-thead'),
+	            tBody = panels.find('#calendar-tbody'),
 	            selectMonth = this.initMonth;
 	        var tplMonth = this.getTpl(1, true, selectMonth - 1),
 	            title = this.title;
@@ -675,8 +684,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    Calendar.prototype.renderYear = function renderYear(years) {
 	        var year = years,
-	            tHead = _jquery2['default']('#calendar-thead'),
-	            tBody = _jquery2['default']('#calendar-tbody');
+	            panels = this.panels,
+	            tHead = panels.find('#calendar-thead'),
+	            tBody = panels.find('#calendar-tbody');
 	        var minYear = parseInt(year / 10) * 10,
 	            maxYear = minYear + 10,
 	            title = this.title;
@@ -715,21 +725,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var _this = this,
 	            body = _jquery2['default']("body"),
 	            title = _this.title,
-	            next = _jquery2['default']('.calendar-next'),
-	            prev = _jquery2['default']('.calendar-prv'),
-	            root = this.root,
-	            panels = _jquery2['default']('.calendar-panel'),
+	            root = _this.root,
+	            panels = _this.panels;
+	        var next = panels.find('.calendar-next'),
+	            prev = panels.find('.calendar-prv'),
 	            tBody = panels.find('table tbody'),
-	            toDay = _jquery2['default']('.calendar-tip');
+	            toDay = panels.find('.calendar-tip');
 	        _this.titleType = title.attr('data-type');
 	        body.on('click', function (e) {
 	            var that = _jquery2['default'](e.target);
-	            if (that.parents('.calendar-panel').length < 1) {
+	            var panel = _this.getPanelClassName();
+	            if (that[0] == root[0]) {
+	                return false;
+	            } else if (that.parents(panel).length < 1) {
 	                _this.close();
 	            }
 	        });
 	        root.on('click', function (e) {
-	            e.stopPropagation();
 	            panels.hasClass('jq-hide') && _this.showInit();
 	            panels.toggleClass('jq-hide');
 	        });
@@ -773,6 +785,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    /**
+	     * 获取当前caneldar的class
+	     * */
+
+	    Calendar.prototype.getPanelClassName = function getPanelClassName() {
+	        return this.opts.root + '+' + '.calendar-panel';
+	    };
+
+	    /**
 	     * 改变后重新渲染日期或月份
 	     * */
 
@@ -803,7 +823,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * */
 
 	    Calendar.prototype.close = function close() {
-	        var panels = _jquery2['default']('.calendar-panel');
+	        var panels = this.panels;
 	        !panels.hasClass('jq-hide') && panels.addClass('jq-hide');
 	    };
 
@@ -891,10 +911,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * */
 
 	    Calendar.prototype.getDateNum = function getDateNum(selectYear, selectMonth, val, isToday) {
-	        this.getFormatNum();
 	        var root = this.root,
-	            vals = this.getFormatNum(selectYear, selectMonth, val);
+	            vals = this.getFormatNum(selectYear, selectMonth, val),
+	            selectHandler = this.opts.selectHandler;
 	        root.val(vals);
+	        selectHandler(vals);
 	        !isToday && this.setSelectTime(selectYear, selectMonth - 1, val);
 	        this.close();
 	    };
@@ -913,6 +934,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	            i < 2 ? str += date[i] + '-' : str += date[i];
 	        }
 	        return str;
+	    };
+
+	    /**
+	     * 动态调用set方法，改变对应属性,
+	     * @param isBegin 默认为true
+	     * */
+
+	    Calendar.prototype.setDate = function setDate(date, isBegin) {
+	        if (isBegin) {
+	            this.beginDates = date ? new Date(date) : new Date(0, 0, 0);
+	        } else {
+	            this.endDates = date ? new Date(date) : new Date(9999, 0, 0);
+	        }
+	        this.getTimeDate(true);
+	        this.renderDays();
+	    };
+
+	    Calendar.prototype.setBeginDate = function setBeginDate(date) {
+	        this.setDate(date, true);
+	    };
+
+	    Calendar.prototype.setEndDate = function setEndDate(date) {
+	        this.setDate(date, false);
 	    };
 
 	    return Calendar;
@@ -956,8 +1000,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * 可用时间的终止时间
 	   * */
-	  endDate: ''
+	  endDate: '',
+	  /**
+	   * 选择时间之后的回调，返回参数为选择日期值
+	   * */
+	  selectHandler: function selectHandler(date) {
+	    console.log(date);
+	  }
 	};
+
 	exports['default'] = options;
 	module.exports = exports['default'];
 
