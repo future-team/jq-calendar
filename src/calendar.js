@@ -24,12 +24,20 @@ class Calendar {
         this.initPanel();
         this.bindEvents();
     }
-
+    /**
+     * 获取唯一的id
+     * */
+    getUniqueId(){
+        return 'jq'+Math.floor(Math.random()*100);
+    }
     initPanel() {
+        this.dates.id = this.getUniqueId();
         let root = this.root,
             panel = panelTPL(this.dates);
         root.after(panel);
-        this.panels = root.next('.calendar-panel');
+        //this.panels = root.next('.calendar-panel');
+        //唯一标示
+        this.panels = $('#'+this.dates.id);
         this.title = this.panels.find('.calendar-top .dates');
         this.renderDays();
     }

@@ -491,11 +491,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.bindEvents();
 	    }
 
+	    /**
+	     * 获取唯一的id
+	     * */
+
+	    Calendar.prototype.getUniqueId = function getUniqueId() {
+	        return 'jq' + Math.floor(Math.random() * 100);
+	    };
+
 	    Calendar.prototype.initPanel = function initPanel() {
+	        this.dates.id = this.getUniqueId();
 	        var root = this.root,
 	            panel = _templatePanelHtml2['default'](this.dates);
 	        root.after(panel);
-	        this.panels = root.next('.calendar-panel');
+	        //this.panels = root.next('.calendar-panel');
+	        //唯一标示
+	        this.panels = _jquery2['default']('#' + this.dates.id);
 	        this.title = this.panels.find('.calendar-top .dates');
 	        this.renderDays();
 	    };
@@ -1021,7 +1032,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
 	    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-	  return "<div class=\"calendar-panel jq-hide\">\n    <div class=\"calendar-container\">\n        <div class=\"calendar-box\">\n            <div class=\"calendar-top\">\n                <div class=\"calendar-prv\"></div>\n                <div class=\"calendar-title\" data-type=\"days\">\n                    <span class=\"dates\">"
+	  return "<div class=\"calendar-panel jq-hide\" id="
+	    + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
+	    + ">\n    <div class=\"calendar-container\">\n        <div class=\"calendar-box\">\n            <div class=\"calendar-top\">\n                <div class=\"calendar-prv\"></div>\n                <div class=\"calendar-title\" data-type=\"days\">\n                    <span class=\"dates\">"
 	    + alias4(((helper = (helper = helpers.selectYear || (depth0 != null ? depth0.selectYear : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"selectYear","hash":{},"data":data}) : helper)))
 	    + "年"
 	    + alias4(((helper = (helper = helpers.selectMonth || (depth0 != null ? depth0.selectMonth : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"selectMonth","hash":{},"data":data}) : helper)))
