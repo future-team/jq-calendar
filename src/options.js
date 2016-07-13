@@ -26,7 +26,6 @@ let options = {
      * 选择时间之后的回调，返回参数为选择日期值
      * */
     selectHandler: function(date){
-        console.log(date);
     }
 };
 

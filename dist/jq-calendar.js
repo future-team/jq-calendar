@@ -1015,9 +1015,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * 选择时间之后的回调，返回参数为选择日期值
 	   * */
-	  selectHandler: function selectHandler(date) {
-	    console.log(date);
-	  }
+	  selectHandler: function selectHandler(date) {}
 	};
 
 	exports['default'] = options;
