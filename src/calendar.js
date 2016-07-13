@@ -37,7 +37,7 @@ class Calendar {
         root.after(panel);
         //this.panels = root.next('.calendar-panel');
         //唯一标示
-        this.panels = $('#'+this.dates.id);
+        this.panels = $(`#${this.dates.id}`);
         this.title = this.panels.find('.calendar-top .dates');
         this.renderDays();
     }
