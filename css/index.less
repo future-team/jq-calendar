@@ -44,11 +44,13 @@
         border-top: 2px solid @origin;
         border-left: 2px solid @origin;
         .transform(-45deg);
-      }
+        filter:progid:DXImageTransform.Microsoft.Matrix(M11=0.5253,M12=0.8509,M21=-0.8509,M22=0.5253,SizingMethod='auto expand');
+    }
     }
     .calendar-next{
       &:after{
         .transform(135deg);
+        filter:progid:DXImageTransform.Microsoft.Matrix(M11=-0.9960,M12=-0.8509,M21=0.8509,M22=0.9960,SizingMethod='auto expand');
       }
     }
   }

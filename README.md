@@ -38,9 +38,11 @@
  建议selectHandler时调用，实现多日历联动
  
  ```
+ 
        let a = new Calendar();
        a.setBeginDate(date);
        a.setEndDate(date) 
+       
  ```
  使用实例：
  js:
@@ -63,10 +65,23 @@
  html:
  
  ```
+ 
     <div id="root" style="padding: 10px">
         <input type="text" class="calendar" />
     </div>
+    
  ```
+- 注：若要兼容ie8及一下版本请引入es5-shim。    
+  在html中判断版本，ie9一下引入    
+ 
+ ```
+    <!--[if lt IE 9] >
+    <script src="http://cdn.bootcss.com/es5-shim/4.5.9/es5-shim.js"></script>
+    <!--[endif]-->
+ 
+ ```
+   
+
 
 ## Command
 
