@@ -3,12 +3,15 @@
  日历组件
 ## UI展示
  - 具体图如下：    
-    选择日期：   
+    选择日期：  
+       
    <img src="./img/day.png" />      
-   选择月份：   
-   <img src="./img/month.png" />       
-   选择年：
-   <img src="./img/year.png" />
+   选择月份：     
+   
+   <img src="./img/year.png" />       
+   选择年：  
+   
+   <img src="./img/month.png" />
         
 ## 使用
  - 使用时，应指定在何处插入分页，即传入root对应的选择器，配置项如下：
