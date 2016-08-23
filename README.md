@@ -1,7 +1,13 @@
 # jq-calendar
  calendar for jQuery 
  日历组件
-
+## UI展示
+ - 具体图如下：
+   
+   <img src="./img/day.png" width="150px" />
+   <img src="./img/month.png" width="150px" />
+   <img src="./img/year.png" width="150px" />
+        
 ## 使用
  - 使用时，应指定在何处插入分页，即传入root对应的选择器，配置项如下：
  
@@ -71,7 +77,7 @@
     </div>
     
  ```
-- 注：若要兼容ie8及一下版本请引入es5-shim。    
+- 注：若要兼容ie8及以下版本请引入es5-shim。    
   在html中判断版本，ie9一下引入    
  
  ```
@@ -81,7 +87,10 @@
  
  ```
    
+## update
 
+   - 1.0.2 增加图片说明
+   - 之前版本 init及修复 
 
 ## Command
 
