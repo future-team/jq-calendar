@@ -4,9 +4,11 @@
 ## UI展示
  - 具体图如下：
    
-   <img src="./img/day.png" width="150px" />
-   <img src="./img/month.png" width="150px" />
-   <img src="./img/year.png" width="150px" />
+   <img src="./img/day.png" />    
+   
+   <img src="./img/month.png" />    
+   
+   <img src="./img/year.png" />
         
 ## 使用
  - 使用时，应指定在何处插入分页，即传入root对应的选择器，配置项如下：
