@@ -14,7 +14,7 @@
    <img src="./img/month.png" />
         
 ## 使用
- - 使用时，应指定在何处插入分页，即传入root对应的选择器，配置项如下：
+ - 使用时，应指定在何处插入日历，即传入root对应的选择器，配置项如下：
  
  ```
        /**
@@ -70,8 +70,10 @@
     })();
     //或作为jquery插件引入
     $.Calendar({
-        
     });
+    //或者require的方式引入
+    let Calendar =  require('jq-calendar').Calendar
+    //使用同上
  ```
  html:
  
@@ -93,7 +95,8 @@
  ```
    
 ## update
-
+   
+   - 1.0.3 修复不支持require方式
    - 1.0.2 增加图片说明
    - 之前版本 init及修复 
 

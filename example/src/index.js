@@ -1,4 +1,6 @@
-import { Calendar } from '../../src/index.js';
+//import { Calendar } from '../../src/index.js';
+//import { Calendar } from '../../dist/jq-calendar.js';
+let Calendar =  require('../../dist/jq-calendar.js').Calendar;
 import $ from 'jquery';
 
 (()=>{
@@ -6,7 +8,7 @@ import $ from 'jquery';
       /!*beginDate:'2016-07-06',
       endDate:'2016-07-10'*!/
    });*/
-   $.Calendar();
+   //$.Calendar();
    let aCal =Calendar({
       root:'.test',
       beginDate:'2016-07-06',
