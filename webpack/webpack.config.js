@@ -47,9 +47,9 @@ module.exports ={
         },
         'jquery':{
             root: 'jQuery',
-            commonjs2: '$',
-            commonjs: '$',
-            amd: '$'
+            commonjs2: 'jquery',
+            commonjs: 'jquery',
+            amd: 'jquery'
         }
     }],
     module:{

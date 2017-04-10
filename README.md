@@ -1,6 +1,7 @@
 # jq-calendar
  calendar for jQuery 
- 日历组件
+ 日历组件   
+ 目前老的cortex项目不支持引其他项目包所以如果在老项目中使用的话只能通过script引入dist下的生成文件。
 ## UI展示
  - 具体图如下：    
     选择日期：  
@@ -96,7 +97,7 @@
    
 ## update
    
-   - 1.0.3 修复不支持require方式
+   - 1.0.4 修复不支持require方式
    - 1.0.2 增加图片说明
    - 之前版本 init及修复 
 
